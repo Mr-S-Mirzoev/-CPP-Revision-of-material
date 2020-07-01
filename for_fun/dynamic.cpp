@@ -203,12 +203,15 @@ void signal_handler (int signal_num) {
 
 int main(int argc, char *argv[])
 {
-    signal(SIGINT, signal_handler);
     MagicTerminalString x;
     if (argc > 1) {
         std::string arg(argv[1]);
         if (arg == "timer") {
             //TIMER:
+            signal(SIGINT, signal_handler);
+            signal(SIGTERM, signal_handler);
+            signal(SIGABRT, signal_handler);
+            signal(SIGHUP, signal_handler);
             unsigned time = 10U;
             if (argc > 2) {
                 time = std::stoul(argv[2]);
@@ -240,6 +243,7 @@ int main(int argc, char *argv[])
                 sleep(1);
                 x.update(pb.show());
             }
+            x.flush();
         }
     } else { 
         std::cout << "USE AS:" << std::endl;
