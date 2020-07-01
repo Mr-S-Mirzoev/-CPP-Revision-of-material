@@ -7,15 +7,36 @@
 #include <inttypes.h>
 #include <fstream>
 
-#define indent_with_t(c) for (int i = 0; i < c; ++i) std::cout << "    "
-#define bold_red(s) "\e[1;31m" << s << rst
-#define bold_blue(s) "\e[1;34m" << s << rst
-
 /*
 Compile as:
     g++ -std=c++11 -Os -Wall -pedantic filesystem.cpp -lboost_system -lboost_filesystem
+    
+    - if you want to check which algorithm is faster, and have statistics, define CHECKSTATISTICS
+    - if you want to redirect output, define OUTPUT_REDIRECTION . In this case run as: 
+        ./a.out . 2> ./my_log_file.txt > ./directory.txt
+    in other cases run:
+        ./a.out .
+    Any other path to directory could be placed instead of .
 */
 
+//#define CHECKSTATISTICS
+//#define OUTPUT_REDIRECTION
+
+#ifndef OUTPUT_REDIRECTION
+
+#define bold_red(s) "\x1B[1;31m" << s << rst
+#define bold_blue(s) "\x1B[1;34m" << s << rst
+
+#else
+
+#define bold_red(s) s
+#define bold_blue(s) s
+
+#endif
+
+#define indent_with_t(c) for (int i = 0; i < c; ++i) std::cout << "    "
+
+#ifdef CHECKSTATISTICS
 std::ostream&
 operator<<( std::ostream& dest, __int128_t value )
 {
@@ -41,10 +62,11 @@ operator<<( std::ostream& dest, __int128_t value )
     }
     return dest;
 }
+#endif
 
 std::ostream& rst(std::ostream& os)
 {
-    return os << "\e[0m";
+    return os << "\x1B[0m";
 }
 
 std::string readable_name(const boost::filesystem::path& p) {
@@ -87,7 +109,7 @@ void recursive_dirwalk (const boost::filesystem::path &p, const int &c, const in
         } else {
             //std::cout << c << std::endl;
             indent_with_t(c);
-            std::cout << "\e[1;34m" << readable_name(entry.path()) << rst << "\n";
+            std::cout << bold_blue(readable_name(entry.path())) << "\n";
         }
     }
     if (empty) {
@@ -138,7 +160,6 @@ public:
         }
     }
 };
-
 
 class clean_file {
     std::string name;
@@ -222,6 +243,7 @@ int main(int argc, char *argv[]) {
         int depth = (argc > 2 ? std::stol(argv[2]) : 3);
         std::cout << "Walking through: ";
         std::cout << bold_red(canonicalize_file_name(p.native().c_str())) << std::endl;
+#ifdef CHECKSTATISTICS
         __int128_t x = 0;
         long long max = 0;
         long long min = -1;
@@ -264,14 +286,17 @@ int main(int argc, char *argv[]) {
              << lx / 100 << ", "
              << "\n"; 
         std::cout << std::endl << std::endl << std::endl << std::endl << std::endl;
-        std::cout << bold_red("RECURSIVE:") << std::endl;
-        std::cout << "Max time taken by function: " << max << " microseconds" << std::endl;
-        std::cout << "Min time taken by function: " << min << " microseconds" << std::endl;
-        std::cout << "Average time taken by function: " << x / 100 << " microseconds" << std::endl;
-        std::cout << bold_red("ITERATIVE:") << std::endl;
-        std::cout << "Max time taken by function: " << lmax << " microseconds" << std::endl;
-        std::cout << "Min time taken by function: " << lmin << " microseconds" << std::endl;
-        std::cout << "Average time taken by function: " << lx / 100 << " microseconds" << std::endl;
+        std::cerr << bold_red("RECURSIVE:") << std::endl;
+        std::cerr << "Max time taken by function: " << max << " microseconds" << std::endl;
+        std::cerr << "Min time taken by function: " << min << " microseconds" << std::endl;
+        std::cerr << "Average time taken by function: " << x / 100 << " microseconds" << std::endl;
+        std::cerr << bold_red("ITERATIVE:") << std::endl;
+        std::cerr << "Max time taken by function: " << lmax << " microseconds" << std::endl;
+        std::cerr << "Min time taken by function: " << lmin << " microseconds" << std::endl;
+        std::cerr << "Average time taken by function: " << lx / 100 << " microseconds" << std::endl;
+#else
+        recursive_dirwalk(p, 1, depth);
+#endif
     } catch (std::logic_error &e) {
         std::cerr << "Got a logic error: " << e.what() << std::endl;
     } catch (...) {
