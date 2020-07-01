@@ -21,11 +21,11 @@ For example, for bash command:
 
 If you wait till it finishes:
 
-![Image of Finish](https://github.com/Mr-S-Mirzoev/-CPP-Revision-of-material/blob/master/moderncpp/no-interrupt.png?raw=true)
+![Image of Finish](https://github.com/Mr-S-Mirzoev/-CPP-Revision-of-material/blob/master/for_fun/no-interrupt.png?raw=true)
 
 If you don't:
 
-![Image of Finish](https://github.com/Mr-S-Mirzoev/-CPP-Revision-of-material/blob/master/moderncpp/interrupt.png?raw=true)
+![Image of Finish](https://github.com/Mr-S-Mirzoev/-CPP-Revision-of-material/blob/master/for_fun/interrupt.png?raw=true)
 
 ## Progress bar:
 
