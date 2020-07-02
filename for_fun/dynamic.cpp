@@ -1,4 +1,4 @@
-#include <libnotify/notify.h>
+#include "notifications.h"
 #include <cstdio>
 #include <unistd.h>
 #include <string>
@@ -60,22 +60,6 @@ public:
         if (!flushed && changed) {
             printf("\r%s\n", last.c_str());
             fflush(stdout);
-        }
-    }
-};
-
-struct Notification {
-    Notification (const std::string &name, const std::string &message, int timeout = 10000) {
-        notify_init("Sample");
-        NotifyNotification* n = notify_notification_new (name.c_str(), 
-                                    message.c_str(),
-                                    0);
-        notify_notification_set_timeout(n, timeout); // 10 seconds
-
-        if (!notify_notification_show(n, 0)) 
-        {
-            std::cerr << "showing has failed" << std::endl;
-            exit(-1);
         }
     }
 };
@@ -230,7 +214,8 @@ int main(int argc, char *argv[])
                 sleep(1);
             }
             x.flush();
-            Notification n("You've set a timer:", notification);
+            Notification n("You\'ve set a timer:", notification);
+            std::cout << std::endl;
         } else if (arg == "progress") {
             //PROGRESS BAR:
             unsigned maxload = (argc > 1) ? std::stoul(argv[2]) : 10;
