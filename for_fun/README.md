@@ -1,23 +1,35 @@
 # Dependencies
 
+## For linux
 - libnotify:
 
 Could be installed on Linux as:
 
 	sudo apt-get install libnotify-dev
+	
+## For MacOS
+There aren't any.
 
 # Compilation
 
-	g++ -o dynamic dynamic.cpp -std=c++17 `pkg-config --cflags --libs libnotify`
+## On linux
+
+	g++ -o dynamic dynamic.cpp notifications.cpp -std=c++17 `pkg-config --cflags --libs libnotify`
+	
+## On MacOS
+
+	g++ -o dynamic dynamic.cpp notifications.cpp -std=c++17
 
 # What can this programm do:
+
+Both programms work correctly on Linux and MacOS.
   
 ## Timer
 It can set up a timer which will send a notification to you even if you interrupted the programm with SIGINT (in most cases ^C) or even SIGHUP (for example when bash terminal is closed).
 
 For example, for bash command:
   
-	  ./dynamic timer 10 Pochistit zubi
+	  ./dynamic timer 10 Brush my teeth
 
 If you wait till it finishes:
 
